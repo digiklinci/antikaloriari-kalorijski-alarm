@@ -1,9 +1,11 @@
 function otkljucaj (brojKalorija: number) {
     aktiviran = 0
     // vreme deaktiviranje je duze ako je broj utrosenih kalorija veci
-    for (let index = 0; index < brojKalorija / 10; index++) {
+    for (let index = 0; index < vreme_deaktivacije; index++) {
         basic.pause(1000)
     }
+    vreme_deaktivacije = 10
+    aktiviran = 1
     basic.showIcon(IconNames.Yes)
 }
 function alarm () {
@@ -14,17 +16,16 @@ function alarm () {
         }
     }
 }
-// deaktiviranje
-input.onGesture(Gesture.Shake, function () {
+input.onButtonPressed(Button.AB, function () {
     basic.clearScreen()
-    kalorijskiPrag = 100
-    aktiviran = 0
-    basic.showIcon(IconNames.No)
+    kalorijskiPrag += 20
+    basic.showNumber(kalorijskiPrag)
 })
 // aktiviranje
 input.onButtonPressed(Button.B, function () {
-    aktiviran = 1
+    basic.clearScreen()
     basic.showIcon(IconNames.Yes)
+    aktiviran = 1
 })
 // prijemnik
 radio.onReceivedNumberDeprecated(function (primljeneKalorije) {
@@ -38,18 +39,26 @@ radio.onReceivedNumberDeprecated(function (primljeneKalorije) {
         radio.sendNumber(0)
     }
 })
+// deaktiviranje
+input.onGesture(Gesture.Shake, function () {
+    basic.clearScreen()
+    aktiviran = 0
+    basic.showIcon(IconNames.No)
+})
 // menjanje praga kalorija
 input.onLogoEvent(TouchButtonEvent.Pressed, function () {
     basic.clearScreen()
-    kalorijskiPrag += 20
+    kalorijskiPrag += -10
     basic.showNumber(kalorijskiPrag)
 })
 let ubrzanje = 0
 let aktiviran = 0
+let vreme_deaktivacije = 0
 let kalorijskiPrag = 0
 basic.showIcon(IconNames.Duck)
 radio.setGroup(0)
 kalorijskiPrag = 100
+vreme_deaktivacije = 10
 basic.forever(function () {
     if (aktiviran == 1) {
         ubrzanje = input.acceleration(Dimension.Strength) - 1023
